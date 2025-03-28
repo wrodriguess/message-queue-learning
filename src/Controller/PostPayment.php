@@ -19,7 +19,6 @@ class PostPayment
     }
 
     // TODO: swagger
-
     #[Route('/payments', name: 'payments')]
     public function handle(Request $request): JsonResponse
     {

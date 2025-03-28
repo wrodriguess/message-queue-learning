@@ -13,11 +13,13 @@
         "doctrine/orm": "^3.3",
         "nelmio/api-doc-bundle": "^4.6",
         "respect/validation": "^1.1",
+        "symfony/amqp-messenger": "7.2.*",
         "symfony/console": "7.2.*",
         "symfony/dotenv": "7.2.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.2.*",
         "symfony/maker-bundle": "^1.62",
+        "symfony/messenger": "7.2.*",
         "symfony/runtime": "7.2.*",
         "symfony/yaml": "7.2.*"
     },

@@ -2,83 +2,50 @@
 
 namespace App\Entity;
 
-use App\ValueObject\Currency;
-use App\ValueObject\PaymentMethodValueObject;
-use App\ValueObject\Value;
+use App\Repository\PaymentRepository;
+use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\DoctrinePaymentRepository")
- * @ORM\Table(name="payment")
- */
+#[ORM\Entity(repositoryClass: PaymentRepository::class)]
 class Payment
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-    */
-    private int $id;
-    /**
-     * @ORM\Column(type="string", length=255)
-    */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 36)]
     private string $userId;
-    /**
-     * @ORM\Embedded(class="App\ValueObject\Value", columnPrefix=false)
-    */
-    private Value $value;
-    /**
-     * @ORM\Embedded(class="App\ValueObject\Currency", columnPrefix="currency_")
-    */
-    private Currency $currency;
-    /**
-     * @ORM\Embedded(class="App\ValueObject\PaymentMethodValueObject", columnPrefix="payment_method_")
-    */
-    private PaymentMethodValueObject $paymentMethod;
+
+    #[ORM\Column(length: 3)]
+    private float $value;
+
+    #[ORM\Column(length: 3)]
+    private string $currencyCode;
+
+    #[ORM\Column(length: 14)]
+    private string $method;
 
     public function __construct(
         string $userId,
-        Value $value,
-        Currency $currency,
-        PaymentMethodValueObject $paymentMethod
+        float $value,
+        string $currencyCode,
+        string $method
     )
     {
         $this->userId = $userId;
         $this->value = $value;
-        $this->currency = $currency;
-        $this->paymentMethod = $paymentMethod;
-    }
-
-    public function userId(): string
-    {
-        return $this->userId;
-    }
-
-    public function value(): float
-    {
-        // O correto é eu retornar o float direto?
-        return $this->value->amount();
-
-        // Ou retornar o objeto de valor e onde for usar chamo o getter do objeto de valor?
-        // return $this->value;
-    }
-
-    public function currency(): string
-    {
-        return $this->currency->value();
-    }
-
-    public function paymentMethod(): string
-    {
-        return $this->paymentMethod->value();
+        $this->currencyCode = $currencyCode;
+        $this->method = $method;
     }
 
     public function toArray(): array
     {
         return [
+            'id' => $this->id,
             'userId' => $this->userId,
             'value' => $this->value,
-            'currency' => $this->currency->value(),
-            'paymentMethod' => $this->paymentMethod->value()
+            'currency' => $this->currencyCode,
+            'paymentMethod' => $this->method
         ];
     }
 }
