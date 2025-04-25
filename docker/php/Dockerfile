@@ -1,47 +1,27 @@
-FROM php:8.2-alpine3.18
+FROM php:8.2-fpm
 
-RUN apk update
+WORKDIR /var/www/html
+COPY . .
 
-RUN apk add --update --no-cache rabbitmq rabbitmq-plugins
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libxml2-dev \
+    libicu-dev \
+    libonig-dev \
+    zlib1g-dev \
+    git \
+    unzip
 
-RUN rabbitmq-plugins enable --offline rabbitmq_management
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-RUN apk add --update --no-cache --virtual .build-deps \
-    $PHPIZE_DEPS \
-    libintl-dev \
-    icu-dev \
-    postgresql-dev \
-    pcre-dev \
-    autoconf \
-    dpkg-dev \
-    dpkg \
-    file \
-    g++ \
-    gcc \
-    libc-dev \
-    make \
-    pkgconf \
-    re2c \
-    rabbitmq-c-dev \
-    rabbitmq-c
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN pecl install amqp && docker-php-ext-enable amqp
+RUN composer self-update
+RUN composer install
 
-RUN docker-php-ext-install intl pdo pdo_pgsql pdo_mysql
-
-RUN pecl install redis && docker-php-ext-enable redis
-
-RUN apk add --update --no-cache php-xml php-dom
-
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-WORKDIR /code
-COPY .. .
-
-RUN composer install --no-scripts --no-autoloader
-
-RUN composer dump-autoload --optimize
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor
 
 EXPOSE 9000
-
-CMD service rabbitmq start && php -S 0.0.0.0:9000 -t /code/public

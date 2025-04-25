@@ -20,7 +20,6 @@ class PaymentRepository extends ServiceEntityRepository
     public function persist(Payment $payment): void
     {
         try {
-
             $em = $this->getEntityManager();
             $em->persist($payment);
             $em->flush();
