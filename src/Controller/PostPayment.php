@@ -8,21 +8,20 @@ use App\Application\DTO\PaymentDto;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Respect\Validation\Validator as v;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-// TODO: Adicionar autenticação na API
 class PostPayment
 {
     public function __construct(private CreatePayment $createPayment)
     {
     }
 
-    // TODO: swagger
-    #[Route('/payments', name: 'payments')]
+    #[Route('/payments', name: 'payments', methods: ['POST'])]
     public function handle(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $data = $request->toArray();
 
         try {
             v::key('user_id', v::stringType()->notEmpty())
@@ -47,7 +46,7 @@ class PostPayment
                 'erros' => $e->getMessages()
             ];
 
-            return new JsonResponse($payload, 422);
+            return new JsonResponse($payload, Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (DomainException $e) {
             $payload = [
                 'status' => 'error',
@@ -55,9 +54,9 @@ class PostPayment
                 'message' => $e->getMessage()
             ];
 
-            return new JsonResponse($payload, 400);
+            return new JsonResponse($payload, Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($payment->toArray(), 201);
+        return new JsonResponse($payment->toArray(), Response::HTTP_CREATED);
     }
 }

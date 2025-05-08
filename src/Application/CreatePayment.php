@@ -4,16 +4,12 @@ namespace App\Application;
 
 use App\Application\DTO\PaymentDto;
 use App\Entity\Payment;
-use App\Repository\PaymentRepository;
-use App\ValueObject\Currency;
-use App\ValueObject\PaymentMethodValueObject;
-use App\ValueObject\Value;
+use App\Message\SavePaymentMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class CreatePayment
 {
-    public function __construct(
-        private PaymentRepository $paymentRepository
-    )
+    public function __construct(private MessageBusInterface $bus)
     {
     }
 
@@ -23,16 +19,17 @@ class CreatePayment
             $paymentDto->userId(),
             $paymentDto->value(),
             $paymentDto->currencyCode(),
-            $paymentDto->paymentMethod()
+            $paymentDto->method()
         );
 
-        // Publicar a solicitação de pagamento em uma fila do RabbitMQ.
-        // Retornar uma resposta de sucesso imediatamente após enfileirar a mensagem.
+        $message = new SavePaymentMessage(
+            $paymentDto->userId(),
+            $paymentDto->value(),
+            $paymentDto->currencyCode(),
+            $paymentDto->method()
+        );
 
-        // Criar um consumidor que:
-        // - Leia mensagens da fila do RabbitMQ.
-        // - Salve o pagamento no banco de dados
-        $this->paymentRepository->persist($payment);
+        $this->bus->dispatch($message);
 
         return $payment;
     }

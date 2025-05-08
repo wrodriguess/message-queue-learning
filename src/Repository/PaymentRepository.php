@@ -17,15 +17,10 @@ class PaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, Payment::class);
     }
 
-    public function persist(Payment $payment): void
+    public function save(Payment $payment): void
     {
-        try {
-            $em = $this->getEntityManager();
-            $em->persist($payment);
-            $em->flush();
-        } catch (Exception $e) {
-            dd($e);
-            throw new Exception('Não foi possivel salvar o pagamento na base de dados.');
-        }
+        $em = $this->getEntityManager();
+        $em->persist($payment);
+        $em->flush();
     }
 }

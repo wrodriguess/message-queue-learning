@@ -41,7 +41,6 @@ class Payment
     public function toArray(): array
     {
         return [
-            'id' => $this->id,
             'userId' => $this->userId,
             'value' => $this->value,
             'currency' => $this->currencyCode,

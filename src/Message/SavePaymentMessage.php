@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Application\DTO;
+namespace App\Message;
 
-class PaymentDto
+final class SavePaymentMessage
 {
     public function __construct(
         private string $userId,
         private float $value,
         private string $currencyCode,
-        private string $method
-    ) {
+        private string $paymentMethod
+    )
+    {
     }
 
     public function userId(): string
@@ -27,8 +28,8 @@ class PaymentDto
         return $this->currencyCode;
     }
 
-    public function method(): string
+    public function paymentMethod(): string
     {
-        return $this->method;
+        return $this->paymentMethod;
     }
 }

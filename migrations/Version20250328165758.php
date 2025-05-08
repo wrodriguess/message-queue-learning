@@ -19,12 +19,12 @@ final class Version20250328165758 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE payment.payment (
+        $this->addSql('CREATE TABLE payment (
                                 id INT auto_increment NOT NULL,
                                 user_id varchar(36) NOT NULL,
                                 value DECIMAL(10, 2) NOT NULL,
-                                currency_currency_code varchar(3) NOT NULL,
-                                payment_method_payment_method varchar(255) NULL,
+                                currency_code varchar(3) NOT NULL,
+                                method varchar(255) NULL,
                                 PRIMARY KEY (id)
                             )
                             ENGINE=InnoDB
@@ -35,6 +35,6 @@ final class Version20250328165758 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE payment.payment;');
+        $this->addSql('DROP TABLE payment;');
     }
 }

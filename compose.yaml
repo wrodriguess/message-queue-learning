@@ -10,9 +10,6 @@ services:
       - ./:/var/www/html
     networks:
       - rede1
-    depends_on:
-      - database
-      - rabbitmq
 
   rabbitmq:
     image: rabbitmq:3-management-alpine

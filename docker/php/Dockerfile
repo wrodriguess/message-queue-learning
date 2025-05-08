@@ -13,15 +13,31 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     zlib1g-dev \
     git \
-    unzip
+    unzip \
+    librabbitmq-dev \
+    libssl-dev \
+    libtool \
+    autoconf \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd intl
+
+RUN docker-php-source extract \
+    && pecl install amqp \
+    && docker-php-ext-enable amqp \
+    && docker-php-source delete
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN composer self-update
-RUN composer install
 
-RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor
+RUN git config --global --add safe.directory /var/www/htm
+
+RUN composer install --no-dev --optimize-autoloader
+
+RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor /var/www/html/public
 
 EXPOSE 9000
+
+CMD ["php-fpm"]
