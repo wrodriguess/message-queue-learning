@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class PostPayment
+class PostPaymentTest
 {
-    public function __construct(private PaymentService $paymentService)
+    public function __construct(private PaymentService $createPayment)
     {
     }
 
@@ -37,7 +37,7 @@ class PostPayment
                 $data['payment_method']
             );
 
-            $payment = $this->paymentService->create($paymentDto);
+            $payment = $this->createPayment->create($paymentDto);
         } catch(NestedValidationException $e) {
             $payload = [
                 'status' => 'error',

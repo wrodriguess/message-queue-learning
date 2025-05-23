@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use Exception;
 use App\Entity\Payment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
