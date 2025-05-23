@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use Exception;
 use App\Entity\Payment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,7 +16,7 @@ class PaymentRepository extends ServiceEntityRepository
         parent::__construct($registry, Payment::class);
     }
 
-    public function save(Payment $payment): void
+    public function persist(Payment $payment): void
     {
         $em = $this->getEntityManager();
         $em->persist($payment);

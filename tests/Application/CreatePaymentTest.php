@@ -7,7 +7,7 @@ use App\Entity\Payment;
 use App\Message\SavePaymentMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class CreatePayment
+class CreatePaymentTest
 {
     public function __construct(private MessageBusInterface $bus)
     {

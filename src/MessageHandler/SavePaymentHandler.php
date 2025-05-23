@@ -24,6 +24,6 @@ final class SavePaymentHandler
             $message->paymentMethod()
         );
 
-        $this->paymentRepository->save($payment);
+        $this->paymentRepository->persist($payment);
     }
 }

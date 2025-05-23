@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 
-class PostPayment
+class PostPaymentTest
 {
-    public function __construct(private PaymentService $paymentService)
+    public function __construct(private PaymentService $createPayment)
     {
     }
 
@@ -37,29 +37,26 @@ class PostPayment
                 $data['payment_method']
             );
 
-            $payment = $this->paymentService->create($paymentDto);
-
-            $payload = $payment->toArray();
-            $statusCode = Response::HTTP_OK;
+            $payment = $this->createPayment->create($paymentDto);
         } catch(NestedValidationException $e) {
             $payload = [
                 'status' => 'error',
                 'type' => 'ValidationError',
                 'message' => 'Houve um erro ao validar o corpo da requisição',
-                'erros' => $e->getMessages(),
+                'erros' => $e->getMessages()
             ];
 
-            $statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
+            return new JsonResponse($payload, Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (DomainException $e) {
             $payload = [
                 'status' => 'error',
                 'type' => $e->getType(),
-                'message' => $e->getMessage(),
+                'message' => $e->getMessage()
             ];
 
-            $statusCode = Response::HTTP_BAD_REQUEST;
+            return new JsonResponse($payload, Response::HTTP_BAD_REQUEST);
         }
 
-        return new JsonResponse($payload, $statusCode);
+        return new JsonResponse($payment->toArray(), Response::HTTP_CREATED);
     }
 }
