@@ -4,14 +4,14 @@ namespace App\MessageHandler;
 
 use App\Entity\Payment;
 use App\Message\SavePaymentMessage;
-use App\Repository\PaymentRepository;
+use App\Repository\Contracts\PaymentRepositoryInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final class SavePaymentHandler
 {
     public function __construct(
-        private PaymentRepository $paymentRepository
+        private PaymentRepositoryInterface $paymentRepository
     ) {
     }
 

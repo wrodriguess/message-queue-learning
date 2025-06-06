@@ -19,6 +19,7 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\Repository\Contracts\PaymentRepositoryInterface: '@App\Repository\PaymentRepository'
     App\Controller\PostPayment:
         arguments: [ '@App\Application\PaymentService' ]
         tags: [ 'controller.service_arguments' ]
