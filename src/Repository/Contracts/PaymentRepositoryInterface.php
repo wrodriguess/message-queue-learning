@@ -6,5 +6,5 @@ use App\Entity\Payment;
 
 interface PaymentRepositoryInterface
 {
-    public function persist(Payment $payment): void;
+    public function create(Payment $payment): void;
 }

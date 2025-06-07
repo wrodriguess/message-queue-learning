@@ -17,7 +17,7 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
         parent::__construct($registry, Payment::class);
     }
 
-    public function persist(Payment $payment): void
+    public function create(Payment $payment): void
     {
         $em = $this->getEntityManager();
         $em->persist($payment);

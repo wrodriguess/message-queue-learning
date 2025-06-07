@@ -48,6 +48,14 @@ O objetivo é criar um fluxo eficiente para processar pagamentos de forma escal�
 // [DUVIDA2]: Não sei se vale a pena criar objeto de valor para value, currency e paymentMethod por serem
 // tão simples
 
-### 3
-Não consegui implementar a inversão de dependencia, criando PaymentRepository como interface e DoctrinePaymentRepository
-sendo a implementação real
+---
+
+- Criar middleware para isolar a validação e remove-la do controller
+
+- Doctrine via inversão de dependencia (FEITO)
+
+- Colocar o return do catch dentro de um finally, para não dar 3 returns (FEITO)
+
+- Renomear service e método do service (FEITO)
+
+- Entidade é do Framework, desacoplar
