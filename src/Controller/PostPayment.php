@@ -40,7 +40,7 @@ class PostPayment
             $payment = $this->paymentService->create($paymentDto);
 
             $payload = $payment->toArray();
-            $statusCode = Response::HTTP_OK;
+            $statusCode = Response::HTTP_CREATED;
         } catch(NestedValidationException $e) {
             $payload = [
                 'status' => 'error',

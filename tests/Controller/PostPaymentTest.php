@@ -2,61 +2,75 @@
 
 namespace App\Controller;
 
-use DomainException;
 use App\Application\PaymentService;
-use App\Application\DTO\PaymentDto;
-use Respect\Validation\Exceptions\NestedValidationException;
-use Respect\Validation\Validator as v;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
 
-class PostPaymentTest
+class PostPaymentTest extends TestCase
 {
-    public function __construct(private PaymentService $createPayment)
+    private PaymentService $paymentServiceMock;
+    private PostPayment $instance;
+
+    public function setUp(): void
     {
+        $this->paymentServiceMock = $this->createMock(PaymentService::class);
+        $this->instance = new PostPayment($this->paymentServiceMock);
     }
 
-    #[Route('/payments', name: 'payments', methods: ['POST'])]
-    public function handle(Request $request): JsonResponse
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testPayment(array $payload, string $expectedMessage, int $httpCode): void
     {
-        $data = $request->toArray();
+        $requestStub = $this->createStub(Request::class);
+        $requestStub->method('toArray')->willReturn($payload);
 
-        try {
-            v::key('user_id', v::stringType()->notEmpty())
-                ->key('value', v::floatType()->positive()->notEmpty())
-                ->key('currency_code', v::in(['BRL', 'USD', 'EUR']))
-                ->key('payment_method', v::in(['cartao_credito', 'pix', 'boleto']))
-                ->assert($data);
+        $actual = $this->instance->handle($requestStub);
 
-            $paymentDto = new PaymentDto(
-                $data['user_id'],
-                $data['value'],
-                $data['currency_code'],
-                $data['payment_method']
-            );
+        $this->assertInstanceOf(JsonResponse::class, $actual);
+        $this->assertEquals($httpCode, $actual->getStatusCode());
+        $this->assertEquals($expectedMessage, (string) $actual->getContent());
+    }
 
-            $payment = $this->createPayment->create($paymentDto);
-        } catch(NestedValidationException $e) {
-            $payload = [
-                'status' => 'error',
-                'type' => 'ValidationError',
-                'message' => 'Houve um erro ao validar o corpo da requisição',
-                'erros' => $e->getMessages()
-            ];
+    private function dataProvider(): array
+    {
+        return [
+            'valid payload' => [
+                $this->validPayload(),
+                '[]',
+                201
+            ],
+            'user_id equals null' => [
+                array_merge($this->validPayload(), ["user_id" => ""]),
+                '{"status":"error","type":"ValidationError","message":"Houve um erro ao validar o corpo da requisi\u00e7\u00e3o","erros":["user_id must not be empty"]}',
+                422
+            ],
+            'value equals string' => [
+                array_merge($this->validPayload(), ["value" => "cem reais"]),
+                '{"status":"error","type":"ValidationError","message":"Houve um erro ao validar o corpo da requisi\u00e7\u00e3o","erros":["value must be of the type float"]}',
+                422
+            ],
+            'currency_code equals unknown' => [
+                array_merge($this->validPayload(), ["currency_code" => "JPY"]),
+                '{"status":"error","type":"ValidationError","message":"Houve um erro ao validar o corpo da requisi\u00e7\u00e3o","erros":["currency_code must be in { \u0022BRL\u0022, \u0022USD\u0022, \u0022EUR\u0022 }"]}',
+                422
+            ],
+            'payment_method equals unknown' => [
+                array_merge($this->validPayload(), ["payment_method" => "permuta"]),
+                '{"status":"error","type":"ValidationError","message":"Houve um erro ao validar o corpo da requisi\u00e7\u00e3o","erros":["payment_method must be in { \u0022cartao_credito\u0022, \u0022pix\u0022, \u0022boleto\u0022 }"]}',
+                422
+            ],
+        ];
+    }
 
-            return new JsonResponse($payload, Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (DomainException $e) {
-            $payload = [
-                'status' => 'error',
-                'type' => $e->getType(),
-                'message' => $e->getMessage()
-            ];
-
-            return new JsonResponse($payload, Response::HTTP_BAD_REQUEST);
-        }
-
-        return new JsonResponse($payment->toArray(), Response::HTTP_CREATED);
+    private function validPayload(): array
+    {
+        return [
+            "user_id" => "5eec725c-ad2d-4f7e-9582-6663c8f06953",
+            "value" => 51.10,
+            "currency_code" => "BRL",
+            "payment_method" => "pix"
+        ];
     }
 }

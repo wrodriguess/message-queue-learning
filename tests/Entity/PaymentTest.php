@@ -2,49 +2,21 @@
 
 namespace App\Entity;
 
-use App\Repository\PaymentRepository;
-use Doctrine\ORM\Mapping as ORM;
+use PHPUnit\Framework\TestCase;
 
-#[ORM\Entity(repositoryClass: PaymentRepository::class)]
-class PaymentTest
+class PaymentTest extends TestCase
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 36)]
-    private string $userId;
-
-    #[ORM\Column(length: 3)]
-    private float $value;
-
-    #[ORM\Column(length: 3)]
-    private string $currencyCode;
-
-    #[ORM\Column(length: 14)]
-    private string $method;
-
-    public function __construct(
-        string $userId,
-        float $value,
-        string $currencyCode,
-        string $method
-    )
+    public function testCreatePaymentWithValidDataShouldWork(): void
     {
-        $this->userId = $userId;
-        $this->value = $value;
-        $this->currencyCode = $currencyCode;
-        $this->method = $method;
+        $payment = new Payment(
+            "5eec725c-ad2d-4f7e-9582-6663c8f06953",
+            51.10,
+            "BRL",
+            "pix"
+        );
+
+        $this->assertInstanceOf(Payment::class, $payment);
     }
 
-    public function toArray(): array
-    {
-        return [
-            'userId' => $this->userId,
-            'value' => $this->value,
-            'currency' => $this->currencyCode,
-            'paymentMethod' => $this->method
-        ];
-    }
+    // IMPLEMENTAR EXCEÇÕES QUE ESTÃO ENCAPSULADAS NOS OBJETOS DE VALOR
 }
