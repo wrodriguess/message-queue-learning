@@ -19,8 +19,8 @@ class PaymentRepository extends ServiceEntityRepository implements PaymentReposi
 
     public function create(Payment $payment): void
     {
-        $em = $this->getEntityManager();
-        $em->persist($payment);
-        $em->flush();
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($payment);
+        $entityManager->flush();
     }
 }
