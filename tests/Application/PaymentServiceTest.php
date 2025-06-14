@@ -4,7 +4,9 @@ namespace App\Tests\Application;
 
 use App\Application\DTO\PaymentDto;
 use App\Application\PaymentService;
+use App\Message\SavePaymentMessage;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class PaymentServiceTest extends TestCase
@@ -21,14 +23,25 @@ class PaymentServiceTest extends TestCase
 
     public function testCreatePaymentShouldWork(): void
     {
-//        $this->messageBusInterfaceMock->expects($this->once())->method('dispatch');
-
         $paymentDto = new PaymentDto(
-            "5eec725c-ad2d-4f7e-9582-6663c8f06953",
-            51.10,
+            "123",
+            100.50,
             "BRL",
             "pix"
         );
+
+        $message = new SavePaymentMessage(
+            $paymentDto->userId(),
+            $paymentDto->value(),
+            $paymentDto->currencyCode(),
+            $paymentDto->method()
+        );
+
+        $this->messageBusInterfaceMock
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($message)
+            ->willReturn(new Envelope($message));
 
         $this->instance->create($paymentDto);
     }

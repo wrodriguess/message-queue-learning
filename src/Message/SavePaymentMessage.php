@@ -2,7 +2,7 @@
 
 namespace App\Message;
 
-final class SavePaymentMessage
+class SavePaymentMessage
 {
     public function __construct(
         private string $userId,

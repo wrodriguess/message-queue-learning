@@ -3,7 +3,6 @@
 namespace App\Application;
 
 use App\Application\DTO\PaymentDto;
-use App\Entity\Payment;
 use App\Message\SavePaymentMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -13,15 +12,8 @@ class PaymentService
     {
     }
 
-    public function create(PaymentDto $paymentDto): Payment
+    public function create(PaymentDto $paymentDto): void
     {
-        $payment = new Payment(
-            $paymentDto->userId(),
-            $paymentDto->value(),
-            $paymentDto->currencyCode(),
-            $paymentDto->method()
-        );
-
         $message = new SavePaymentMessage(
             $paymentDto->userId(),
             $paymentDto->value(),
@@ -30,8 +22,5 @@ class PaymentService
         );
 
         $this->bus->dispatch($message);
-
-        return $payment;
     }
-
 }

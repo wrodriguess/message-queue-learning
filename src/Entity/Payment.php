@@ -23,6 +23,31 @@ class Payment
         $this->method = $method;
     }
 
+    public function id(): int
+    {
+        return $this->id;
+    }
+
+    public function userId(): string
+    {
+        return $this->userId;
+    }
+
+    public function value(): float
+    {
+        return $this->value;
+    }
+
+    public function currencyCode(): string
+    {
+        return $this->currencyCode;
+    }
+
+    public function method(): string
+    {
+        return $this->method;
+    }
+
     public function toArray(): array
     {
         return [

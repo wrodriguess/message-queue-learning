@@ -3,6 +3,4 @@
 1.PHPMD (https://github.com/rafael-neris/object-calisthenics/blob/master/phpmd.xml)
 Comando para executar PHPMD `vendor/bin/phpmd src text phpmd.xml --exclude "src/Kernel.php"`
 
-2. TESTE UNITÁRIOS E INTEGRAÇÃO (SWITCH DE TESTE)
-
-3. MIDDLWARE
+2. TESTE UNITÁRIOS E INTEGRAÇÃO (suite DE TESTE)
