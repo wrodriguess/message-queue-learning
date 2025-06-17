@@ -18,7 +18,7 @@ class PostTasks
     {
     }
 
-    #[Route('/tasks', name: 'tasks', methods: ['POST'])]
+    #[Route('/tasks', name: 'createTask', methods: ['POST'])]
     public function handle(Request $request): JsonResponse
     {
         $data = $request->toArray();
